@@ -1,0 +1,23 @@
+#title{
+    font-weight: bold;
+    font-size: 28px;
+}
+
+
+.title-used-ixp{
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.stats-ixp-content{
+    width: 100%;
+}
+
+.list-item-ixp div{
+    width: 50%;
+    float: left;
+}
+
+#countries-list{
+    width: 100%;
+}
