@@ -118,260 +118,131 @@
 				<p>No te preocupes si no cuentas con un lenguaje preciso de programación o algún conocimiento de alguna tecnología en específico, los Champions del Hackathon fungirán como tu guía, ellos tendrán el rol de brindarte de manera clara y precisa, cual es la problemática o reto a resolver, lograr tu atención y desarrollar las habilidades con las que cuentas para cumplir con el o los objetivos de grupo.</p>
 			</div>
 
-
-<!--			<div id="desafios">
+			<div id="desafios">
 				<h2>Retos</h2>
 				<div class="challenge-section">
-					<div id="atlas" class="challenge">RIPE Atlas</div>
-					<p>
-						Con más de 10k sondas conectadas por todo el mundo, el proyecto
-						RIPE Atlas provee una visión objetiva de Internet y sus
-						redes, desde miles de puntos de observación. Esta es una
-						oportunidad para <a>desarrolladores web, desarrolladores de
-					software, y operadores de redes</a> para trabajar en conjunto
-						con el equipo de Atlas. Es también una oportunidad para
-						recolectar nuevas estadísticas y poder comprender de mejor
-						manera la conectividad regional.
-					</p>
-
-					<h4>Skills deseables (alguna)</h4>
+					<div id="milacnic" class="challenge">API MiLACNIC</div>
+					<p>MiLACNIC cuenta con un API basada en REST, con autenticación OAuth, cuyo objetivo es la gestión masiva de recursos de la plataforma. El API utiliza OpenAPI (Swagger anteriormente), cuya interfaz de usuario (Swagger-ui), muestra la documentación del API de forma interactiva, permitiéndole a desarrolladores y usuarios probar los servicios de la misma.</p>
+					
+					<!--<h4>Skills deseables (alguna)</h4>
 					<ul>
 						<li>Python (o similar)</li>
 						<li>JavaScript (o similar)</li>
 						<li>Visualización de datos</li>
 						<li>Experiencia en operación de redes (para poder dar feedback)</li>
-					</ul>
-
+					</ul>-->
 					<h4>Goals</h4>
-					<div class="postit">Mejorar ideas existentes</div>
-					<div class="postit" style="font-size: 1.3em;">Casos de uso de herramientas actuales</div>
-					<div class="postit">Integración con dashboards</div>
-					<div class="postit" style="font-size: 1.6em;">Desarrollo de nuevas herramientas</div>
-
-					<h4>Requisitos</h4>
-					<ul>
-						<li>Asistir al tutorial de RIPE Atlas del miércoles 20 para
-							entender Atlas y otras herramientas. Se aconseja también
-							conocer Atlas y tener <a href="https://access.ripe.net/registration">una cuenta de RIPE Atlas creada</a>.</li>
-					</ul>
-
-					<h4>Lectura recomendada</h4>
-					<ul>
-						<li><a href="https://atlas.ripe.net/about/">Acerca</a></li>
-						<li><a href="https://atlas.ripe.net/docs/">Docs</a></li>
-						<li><a href="https://atlas.ripe.net/docs/api/v2/reference/">Referencia de la API</a>							👈 en especial</li>
-						<li><a href="https://atlas.ripe.net/measurements-and-tools/tools/">Mediciones y Herramientas</a></li>
-						<li><a href="https://atlas.ripe.net/about/faq/">FAQ</a></li>
-					</ul>
+					<div class="postit">Mejoras e inclusión de nuevas funcionalidades.</div>
+					<div class="postit">Mejoras de seguridad.</div>
+					<div class="postit">Desarrollo de clientes para consumir los servicios del API.</div>
+					<div class="postit">Mejoras de testing del API.</div>
 
 					<h4>Referencias</h4>
 					<ul>
-						<li><a href="https://atlas.ripe.net">https://atlas.ripe.net</a></li>
-						<li><a href="https://stat.ripe.net">https://stat.ripe.net</a></li>
+						<li>TRELLO: <a href="https://trello.com/b/dIj2RgI6/api-milacnic" target="_blank">https://trello.com/b/dIj2RgI6/api-milacnic</a></li>
+						<li>GITHUB: <a href="https://github.com/LACNIC/hackathon-2019/tree/master/apimilacnic" target="_blank">https://github.com/LACNIC/hackathon-2019/tree/master/apimilacnic</a></li>
 					</ul>
-
+					<!--
 					<h4>Contacto</h4>
 					<ul>
 						<li><a href="mailto:mcandela@ripe.net?Subject=Contacto%20Hackathon">Massimo Candela</a></li>
 						<li><a href="mailto:mgalante@ripe.net?Subject=Contacto%20Hackathon">Michela Galante</a></li>
-					</ul>
+					</ul>-->
 				</div>
-
 				<div class="challenge-section">
-					<div id="maqueta" class="challenge" style="font-size: 1.75em;">Maqueta de Internet</div>
-					<p>
-						Internet es una tecnología que permea todas las capas de la vida
-						actual, sin embargo sigue siendo una black box para muchas
-						personas. No entender completamente su funcionamiento hace
-						que no se puedan discutir cuáles son sus desafíos y oportunidades
-						en igualdad de condiciones. Esta desigualdad aplica para
-						procesos técnicos, económicos, sociales, políticos y culturales.
-					</p>
-					<p>
-						En este marco es que encontramos particularmente útil la creación
-						de un modelo a escala que ilustre el funcionamiento técnico
-						de Internet con la menor cantidad posible de tecnicismos,
-						facilitado a través de la creación de diferentes módulos
-						que permitan entender los distintos tópicos asociados a
-						la peripecia de Internet. El diseño del modelo será realizado
-						teniendo en cuenta que a futuro se desea compartir la metodología
-						de armado de la maqueta con la comunidad.
-					</p>
-
-					<h4>Skills deseables (no exluyentes)</h4>
+					<div id="up-down" class="challenge">UP/DOWN</div>
+					<p>La certificación de recursos numéricos de internet se realiza a través del protocolo RPKI, el cual es un protocolo que permite validar el ASN que originó una ruta o prefijo IP en internet.</p>
+					<p><strong>Modo hosted</strong> en el cual LACNIC emite los certificados de recursos y almacena tanto claves públicas como privadas. Los certificados se emiten a demanda de las organizaciones y las operaciones se realizan a través de interfaz web.</p>
+					<p><strong>Modo delegated</strong>, en el cual aplica el estándar updown RPKI, protocolo de aprovisionamiento de certificados RPKI -interacción request / response; cliente ‘down’ / servidor ‘up'- envía solicitudes que se procesan, generan y envían la respuesta.</p>
+					<!--<h4>Skills deseables (alguna)</h4>
 					<ul>
-						<li>Conocimientos técnicos (básicos) acerca del funcionamiento
-							de Internet</li>
-						<li>Interés respecto a los problemas de Gobernanza de Internet</li>
-					</ul>
-
+						<li>Python (o similar)</li>
+						<li>JavaScript (o similar)</li>
+						<li>Visualización de datos</li>
+						<li>Experiencia en operación de redes (para poder dar feedback)</li>
+					</ul>-->
 					<h4>Goals</h4>
-					<div class="postit" style="font-size: 1.3em;">Validar el funcionamiento de Internet</div>
-					<div class="postit">Modelo Básico: definición</div>
-					<div class="postit">Modelo Básico: diseño</div>
-					<div class="postit">Módulos adicionales: definición</div>
-					<div class="postit">Análisis de impacto</div>
-					<div class="postit">Integración con dashboards</div>
+					<div class="postit">Generar artículos de documentación sobre updown.</div>
+					<div class="postit">Generar reportes updown, por medio del análisis  de logs rsync y apache.</div>
+					<div class="postit">Generar reportes de estadísticas de información RPKI.</div>
+					<div class="postit">Crear funcionalidad complementaria, a través del análisis de algunos RFCs.</div>
+					<div class="postit">Crear artículo sobre los validadores de RPKI existentes.</div>
+					<div class="postit">Probar interacción con updown por medio de la instalación o creación de clientes http y generar reporte.</div>
+					<div class="postit">Obtener formas de monitorear updown.</div>
+					<div class="postit">Relevar y analizar información de proyecto FORT.</div>
+					
 
-					<h4>Requisitos</h4>
+					<!--<h4>Referencias</h4>
 					<ul>
-						<li>Ninguno</li>
-					</ul> 
-
-					<h4>Lectura recomendada</h4>
-					<ul>
-						<li><a href="https://www.internetsociety.org/internet">https://www.internetsociety.org/internet</a></li>
-						<li><a href="https://www.internetsociety.org/publications">https://www.internetsociety.org/publications</a></li>
+						<li>TRELLO: <a href="https://trello.com/b/dIj2RgI6/api-milacnic">https://trello.com/b/dIj2RgI6/api-milacnic</a></li>
+						<li>GITHUB: <a href="https://github.com/LACNIC/hackathon-2019/tree/master/apimilacnic">https://github.com/LACNIC/hackathon-2019/tree/master/apimilacnic</a></li>
 					</ul>
-
+					
 					<h4>Contacto</h4>
-					<p><a href="mailto:hernanalbano@gmail.com?Subject=Contacto%20Hackathon">Hernán Albano</a></p>
-
-					 <h4>Referencias</h4>
 					<ul>
-						<li>Ninguna</li>
-					</ul>
+						<li><a href="mailto:mcandela@ripe.net?Subject=Contacto%20Hackathon">Massimo Candela</a></li>
+						<li><a href="mailto:mgalante@ripe.net?Subject=Contacto%20Hackathon">Michela Galante</a></li>
+					</ul>-->
 				</div>
-
 				<div class="challenge-section">
-					<div id="milacnic" class="challenge">API para MiLACNIC</div>
-					<p>
-						La gran mayoría de los proveedores de Internet en LATAM son pequeñas
-						y medianas empresas, para estas organizaciones, un sistema
-						de gestión web para la actualización de la información
-						de registro de recursos de internet (IPs , ASN, rDNS),
-						es una solución adecuada en función de la cantidad de datos
-						que manejan. Como contraparte existen otros cientos de
-						ISPs donde la cantidad de recursos que administran es muy
-						grande y la solución actual no satisface sus necesidades.
-						Estas organizaciones comúnmente tienen sistemas propios
-						para la gestión de IPs, y frecuentemente plantean la necesidad
-						de que LACNIC les brinde alguna solución integrable con
-						sus sistemas , para así automatizar la administración de
-						esta información. Una API REST, sería la solución pensada.
-					</p>
-
-					<h4>Skills deseables (alguna)</h4>
+					<div id="IRR" class="challenge">IRR</div>
+					<p>Los IRR son sistemas que permiten registrar información relacionada con el routing en Internet, existen muchos tipos de objetos aunque los más usados son: route, route6, as-set y manteiners, por distintas razones LACNIC no cuenta con este sistema.</p>
+					<p>Los IRR tienen problemas intrínsecos relacionados con la calidad de la información, el mantenimiento de la misma, la autorización para carga, etc. Potencialmente pueden llegar a tener otro problemas relacionados con la tecnología y usabilidad de la herramienta que se diseñe. EL IRR de LACNIC debe nacer sin estos problemas.</p>					
+					<!--<h4>Skills deseables (alguna)</h4>
 					<ul>
-						<li>Documentación</li>
-						<li>Java</li>
-						<li>JavaScript (Node o Angular)</li>
-						<li>Ruby</li>
-						<li>C++</li>
-						<li>.NET</li>
-						<li>Testing</li>
-						<li>Docker</li>
-						<li>Git</li>
-					</ul>
-
+						<li>Python (o similar)</li>
+						<li>JavaScript (o similar)</li>
+						<li>Visualización de datos</li>
+						<li>Experiencia en operación de redes (para poder dar feedback)</li>
+					</ul>-->
 					<h4>Goals</h4>
-					<div class="postit">API RESTful</div>
-					<div class="postit">Cliente del Web Service</div>
-					<div class="postit">Pruebas al Web Service</div>
-					<div class="postit">Autenti- cación
-					</div>
-					<div class="postit">Buenas prácticas</div>
-					<div class="postit">Cliente EPP</div>
+					<div class="postit">Desarrollo de herramientas que mejoren el acceso a la información disponible en las distintas bases de datos que gestiona LACNIC.</div>
+					<div class="postit">Consultas al IRR port 43 (Similar al whois).</div>
+					<div class="postit">Desarrollo de MiLACNIC Query.</div>
+					<div class="postit">Documentación y testing del IRR.</div>
+					
 
-					<h4>Para hacer antes del Hackathon</h4>
+					<h4>Referencias</h4>
 					<ul>
-						<li>Traer ambientes para el lenguaje de programación en el
-							que se sienten más cómodos instalados en sus máquinas</li>
-						<li>Clonarse los siguientes repositorios:
-							<ul>
-								<li><a href="https://github.com/grada84/epp-client">EPP Client</a></li>
-								<li><a href="https://github.com/grada84/epp-object">EPP Object</a></li>
-								<li><a href="https://github.com/grada84/milacnic-ws">MiLACNIC WS</a></li>
-							</ul>
-						</li>
+						<li>TRELLO: <a href="https://trello.com/b/7f5xSi6i/routing-irr" target="_blank">https://trello.com/b/7f5xSi6i/routing-irr</a></li>
+						<li>GITHUB: <a href="https://github.com/LACNIC/hackathon-2019/tree/master/routing-irr" target="_blank">https://github.com/LACNIC/hackathon-2019/tree/master/routing-irr</a></li>
 					</ul>
-
-					<h4>Lectura recomendada</h4>
-					<ul>
-						<li>Cómo instalarse los ambientes de desarrollo provistos por
-							los champions</li>
-						<li>Cómo clonarse el código de GitHub</li>
-					</ul>
-				    <h4>Referencias</h4>
-					<ul>
-						<li>Ninguna</li>
-					</ul>
-
+					<!--
 					<h4>Contacto</h4>
-					<p><a href="mailto:gerardo@lacnic.net?Subject=Contacto%20Hackathon">Gerardo Rada</a></p>
+					<ul>
+						<li><a href="mailto:mcandela@ripe.net?Subject=Contacto%20Hackathon">Massimo Candela</a></li>
+						<li><a href="mailto:mgalante@ripe.net?Subject=Contacto%20Hackathon">Michela Galante</a></li>
+					</ul>-->
 				</div>
-
 				<div class="challenge-section">
-					<div id="rpki" class="challenge">RPKI en el vecindario</div>
-					<p>
-						RPKI es una infraestructura de clave pública que permite que
-						una organización emita material criptográfico para establecer
-						el número de sistema autónomo que utilizará para originar
-						el espacio IP sobre el cual tiene custodia. Diversos episodios
-						de ‘hijackings’ a nivel global han demostrado la importancia
-						de desplegar esta tecnología. En la región LAC el despliegue
-						de RPKI ha sido bastante exitoso, más que en muchas otras
-						regiones. Sin embargo, aún hay muchas organizaciones que
-						no han generado su certificado ni los ROAs que cubran el
-						espacio que anuncian, por lo que sigue siendo necesario
-						promover esta tecnología, transmitiendo la importancia
-						de su despliegue. <b>Creemos que para una organización puede
-						ser interesante entender el nivel de despliegue de RPKI
-						por parte de sus vecinos a la hora de evaluar si desplegar
-						o no esta tecnología en su red, por lo que una herramienta
-						que permita visualizar de forma sencilla esta información
-						sería muy útil</b>.
-					</p>
-
-					<h4>Skills deseables (alguna)</h4>
+					<div id="eventos" class="challenge">EVENTOS</div>
+					<p>El sistema de Eventos de LACNIC permite gestionar las actividades relacionadas a los usuarios. Esta gestión centralizada requiere la necesidad de automatizar tareas. Algunas de estas interfaces se plantea ser reemplazadas por un nuevo mecanismo con tecnología RFID.</p>
+					
+					<!--<h4>Skills deseables (alguna)</h4>
 					<ul>
-						<li>Documentación</li>
-						<li>Python</li>
-						<li>Ruby</li>
-						<li>Go</li>
-						<li>Rust</li>
-						<li>HTML / JavaScript (widget)</li>
-						<li>Testing</li>
-						<li>Docker</li>
-						<li>Git</li>
-					</ul>
-
+						<li>Python (o similar)</li>
+						<li>JavaScript (o similar)</li>
+						<li>Visualización de datos</li>
+						<li>Experiencia en operación de redes (para poder dar feedback)</li>
+					</ul>-->
 					<h4>Goals</h4>
-					<div class="postit">[Backend]
-						Vecinos y prefijos
-					</div>
-					<div class="postit">[Backend]
-						espacio cubierto
-					</div>
-					<div class="postit">[Frontend]
-						Widget HTML</div>
+					<div class="postit">Investigación sobre la implementación de RFID.</div>
+					<div class="postit">Implementar mecanismo de protección de la información y de uso controlado del protocolo en relación con las actividades a implementar (genéricamente aplican a cualquier acción).</div>
+					<div class="postit">Implementar conjunto de funcionalidades que vinculen funcionalidades nuevas y/o existentes con la tecnología RFID.</div>
 
-					<h4>Para hacer antes del Hackathon</h4>
+					<h4>Referencias</h4>
 					<ul>
-						<li>Traer ambientes para el lenguaje de programación en el
-							que se sienten más cómodos instalados en sus máquinas</li>
+						<li>TRELLO: <a href="https://trello.com/b/LEPhtNea/eventos" target="_blank">https://trello.com/b/LEPhtNea/eventos</a></li>
+						<li>GITHUB: <a href="https://github.com/LACNIC/hackathon-2019/tree/master/eventos" target="_blank">https://github.com/LACNIC/hackathon-2019/tree/master/eventos</a></li>
 					</ul>
-
-					<h4>Lectura recomendada</h4>
-					<ul>
-						<li><a href="http://www.lacnic.net/en/web/lacnic/certificacion-de-recursos-rpki">http://www.lacnic.net/en/web/lacnic/certificacion-de-recursos-rpki</a></li>
-						<li><a href="https://tools.ietf.org/html/rfc6810">https://tools.ietf.org/html/rfc6810</a></li>
-						<li><a href="https://www.arin.net/resources/rpki/">https://www.arin.net/resources/rpki/</a></li>
-						<li><a href="https://www.ripe.net/manage-ips-and-asns/resource-management/certification">https://www.ripe.net/manage-ips-and-asns/resource-management/certification</a></li>
-						<li><a href="https://bgpmon.net/securing-bgp-routing-with-rpki-and-roas/">https://bgpmon.net/securing-bgp-routing-with-rpki-and-roas/</a></li>
-						<li><a href="https://en.wikipedia.org/wiki/Resource_Public_Key_Infrastructure">https://en.wikipedia.org/wiki/Resource_Public_Key_Infrastructure</a></li>
-					</ul>
-
-					 <h4>Referencias</h4>
-					<ul>
-						<li>Ninguna</li>
-					</ul>
-
+					<!--
 					<h4>Contacto</h4>
-					<p><a href="mailto:sofia@apnic.net?Subject=Contacto%20Hackathon">Sofía Silva</a></p>
-				</div>
-
-			</div> -->
+					<ul>
+						<li><a href="mailto:mcandela@ripe.net?Subject=Contacto%20Hackathon">Massimo Candela</a></li>
+						<li><a href="mailto:mgalante@ripe.net?Subject=Contacto%20Hackathon">Michela Galante</a></li>
+					</ul>-->
+				</div>				
+			</div>
 			<div id="champions">
 				<h2>CHAMPIONS</h2>
 
