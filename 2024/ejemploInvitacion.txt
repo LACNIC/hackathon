@@ -1,0 +1,113 @@
+Hackathon MVD 17
+
+LACNIC, el Registro Regional de Direcciones IP para Latinoamérica y el Caribe, y AGESIC, Agencia para el Desarrollo del Gobierno de Gestión Electrónica y la Sociedad de la Información y del Conocimiento tienen el agrado de invitar a todos los miembros del capítulo al Hackathon MVD 17, el cual tendrá lugar en el marco del evento LACNIC 28 - LACNOG 2017. 
+
+
+Los hackathon son actividades que reúnen a personas interesadas en trabajar de forma intensiva en un tema específico.       Por lo general, grupos de diseñadores, programadores, desarrolladores, analistas de datos, testers, junto con otros grupos de usuarios con necesidades concretas colaboran en proyectos en común, en un período intenso de pocos días.
+
+El hackathon organizado por LACNIC y LACNOG es una oportunidad para que los operadores de red trabajen en conjunto con programadores y otros usuarios a fin de desarrollar herramientas u otro tipo de interfaces que satisfagan las distintas necesidades de cada uno, produzcan nuevos resultados y/o mejoren la experiencia de los usuarios.
+
+
+Objetivos
+
+Reunir a la comunidad de operadores de redes, investigadores y otros usuarios que tengan necesidades específicas de I+D, junto con diseñadores, programadores, desarrolladores y testers que puedan dar solución a dichas necesidades en un corto período de tiempo (2 días).
+
+Fechas y horarios
+
+Sábado 23 de Setiembre
+08:00: Sala abierta para la disposición de los carteles en las mesas por los champions.
+
+09:00: Sala abierta para todos - Pastelería y café09:30: Inicio de Hackathon
+
+09:45: Conformación de Equipos
+
+12:30: Almuerzo
+
+15:30: Pausa de la tarde - Snacks & Beers
+
+20:00: Cierre del Primer día
+
+
+Domingo 24 de Setiembre
+08:30: Se abre la sala - Pastelería y Café
+
+10:30: Break
+
+10:45: Cada grupo prepara una breve presentación del proyecto
+
+11:30: Presentación del proyecto a otros participantes y jueces
+
+12:00: Recapitulación y sugerencias de mejoras
+
+12:30: Entrega de reconocimientos13:00: Cierre del Hackathon
+
+PARTICIPACIÓN
+
+Inscripción
+
+La inscripción al hackathon es independiente a la de los eventos de LACNIC 28 y AGESIC. Te puedes inscribir en el Hackathon Montevideo a través del siguiente enlace aquí
+
+Los cupos para los participantes son limitados y dependiendo de la cantidad de interesados es posible que LACNIC le solicite que confirme su participación días antes del inicio del evento.
+
+Motivación para participar
+
+
+Beca para participar en LACNIC28 - LACNOG 2017: Los inscriptos tendrán la opción de solicitar la exoneración de la inscripción para participar en evento LACNIC28 - LACNOG 2017 a realizarse del 18 al 22 de setiembre de 2017 en Radisson Victoria Plaza Hotel. Las solicitudes serán recibidas hasta el 31 de Agosto a las 17.00 hs de Uruguay, para solicitar ingrese en Solicitar Beca para participar en LACNIC28 - LACNOG 2017
+Beca para LACNIC29: Todos los entregables que se produzcan durante el hackaton serán evaluados por un Comité Evaluador, compuesto por representantes de LACNIC, AGESIC, y referentes técnicos de algunas otras organizaciones participantes. En base a la evaluación de este comité, entre los participantes del entregable mejor puntuado se sorteará una beca para asistir al próximo evento de LACNIC, donde se expondrán los resultados obtenidos.
+Socializar con colegas: La inscripción al hackathon incluye coffe breaks, almuerzos y acceso al cocktail para el sábado de noche.
+Certificado de participación: LACNIC otorgará un certificado de participación.
+Memorias del evento: LACNIC publicará un reporte con los resultados del hackathon destacando y agradeciendo la participación de todos.
+Sorteos y Regalos por parte de los patrocinadores del evento.
+
+Público objetivo:
+
+Profesionales informáticos independientes: Desarrolladores/programadores, testers, diseñadores, etc.
+Empleados de empresas de desarrollo software
+Conocedores de sistemas operativos, que puedan desarrollar herramientas para estos
+Operadores de red y otros usuarios que puedan presentar casos de uso/necesidades sobre los cuales trabajar
+Estudiantes avanzados en carreras de tecnologías
+Investigadores que tengan proyectos de mediciones u otras necesidades para que sean desarrollados
+
+Requisitos
+
+Debes traer tu propia computadora, concentración, buena onda y ganas de trabajar :)Como participante NO debes conocer un lenguaje programación o alguna tecnología especifica, los Champions del Hackathon deben ser capaces de informarte de los problemas a resolver, captar tu atención y capitalizar tus habilidades para lograr los objetivos del equipo.
+
+CHAMPIONS
+
+Proponer tecnologías
+
+Si deseas proponer un tema y sumar participates a tu proyecto, envíanos un correo a: hackathon@lacnic.net con la siguiente información:
+
+Resumen de la tecnologia en las que van a trabajar (abstract)
+Objetivos para el hackathon (goals)
+Habilidades que van a necesitar de los participantes (Skills)
+Qué cosas deben/pueden hacer los participantes antes de asistir al hackathon (Pre-Hackathon)
+Lecturas recomendadas (Readme)
+Referecias (Ref)
+Áreas
+En este momento el hackathon está abierto para recibir propuestas de los champions, los proyectos que se planteen tienen que estar enmarcados en algunas de las siguientes áreas:
+
+Gobierno electrónico y Datos Abiertos
+Redes e Internet
+Arquitectura, dimensionamiento, configuración y administración de redes IP
+Aplicaciones para usuarios finales (e.g. E-mail, HTTP, DNS entre otros)
+Sistemas distribuidos, cloud computing
+IPv6
+Seguridad y manejo de datos de red, mitigación de ataques
+Monitoreo, performance, mediciones y telemetría de redes
+nvestigación y Educación
+Estadísticas a partir de la información registro de IPs
+
+El reto para los champions
+
+Una vez te hayas convertido en champion, tendrás la oportunidad de presentar tu tecnología al resto de los participantes, algunos de estos participantes elegirán unirse a tu grupo.
+
+El reto es ayudarles a entender tu propuesta a través de una descripción completa.
+Si utilizas datos, asegúrate de que estén disponibles públicamente.
+Si tu proyecto requiere un ambiente particular, brindar algún mecanismo de provisionamiento (máquinas virtuales / Vagrantfiles / Dockerfiles / pip requirements.txt / shell scripts)
+
+Esto hará que la puesta en marcha resulte mucho más sencilla y te ayudará a capitalizar esos recursos que te están ofreciendo.
+
+CONTACTO
+
+Para consultas sobre el evento o patrocinios, escribir a: hackathon@lacnic.net
