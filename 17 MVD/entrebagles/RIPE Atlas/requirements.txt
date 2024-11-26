@@ -2,4 +2,4 @@ flask
 flask-jsonpify
 flask-sqlalchemy
 flask-restful
-dnspython==1.15.0
+dnspython==2.6.1
