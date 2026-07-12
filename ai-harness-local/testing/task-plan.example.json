@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.1.0",
+  "item": {"id": "ITEM-000", "description": "Descripcion de la tarea"},
+  "zoho": {"itemId": "", "containerId": ""},
+  "cases": [
+    {
+      "id": "TASK-ITEM-000-01",
+      "title": "Caso puntual",
+      "preconditions": [],
+      "steps": ["Ejecutar la accion"],
+      "expectedResult": "Se observa el resultado esperado",
+      "result": "pending",
+      "promotion": {
+        "decision": "keep-one-off",
+        "relation": "one-off",
+        "reason": "Caso puntual sin estabilidad suficiente para el stock de regresion",
+        "targetRegressionIds": [],
+        "dataImpact": "read-only",
+        "dataProfile": "shared-readonly"
+      },
+      "affectedRegressions": []
+    }
+  ]
+}

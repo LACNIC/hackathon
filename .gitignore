@@ -1,0 +1,10 @@
+ai-harness-local/zoho/.zoho.config
+ai-harness-local/zoho/.zoho.client.env
+ai-harness-local/zoho/.zoho.env
+*.zoho.config
+*.zoho.client.env
+*.zoho.env
+ai-harness-local/testing/.env
+ai-harness-local/testing/.auth/
+ai-harness-local/testing/runs/
+ai-harness-local/testing/sessions/

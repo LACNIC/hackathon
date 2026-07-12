@@ -1,0 +1,15 @@
+{
+  "project": "layered-java-maven-application",
+  "description": "Backlog operativo para agentes de IA. Adaptable a proyectos Java/Maven con arquitectura por capas.",
+  "rules": {
+    "one_feature_at_a_time": true,
+    "require_tests_to_close": true,
+    "valid_status": [
+      "pending",
+      "in_progress",
+      "done",
+      "blocked"
+    ]
+  },
+  "features": []
+}

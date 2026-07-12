@@ -1,0 +1,45 @@
+# Copia este archivo como ai-harness/zoho/.zoho.config y completa valores reales.
+# No versionar .zoho.config.
+
+# Data center US. Para otros DC cambia sprintsapi/accounts segun la doc oficial.
+ZOHO_SPRINTS_API_BASE=https://sprintsapi.zoho.com/zsapi
+ZOHO_ACCOUNTS_BASE=https://accounts.zoho.com
+ZOHO_SPRINTS_WEB_BASE=https://sprints.zoho.com
+ZOHO_SPRINTS_WORKSPACE=
+ZOHO_SPRINTS_PROJECT_NO=
+
+# Scopes recomendados para esta integracion:
+# ZohoSprints.teams.READ,ZohoSprints.projects.READ,ZohoSprints.sprints.READ,
+# ZohoSprints.items.CREATE,ZohoSprints.items.UPDATE,ZohoSprints.projectusers.READ
+# OAuth se carga desde ai-harness/zoho/.zoho.client.env.
+
+# IDs del workspace/proyecto equivalente en Zoho Sprints.
+ZOHO_SPRINTS_TEAM_ID=
+ZOHO_SPRINTS_PROJECT_ID=
+ZOHO_SPRINTS_BACKLOG_ID=
+
+# IDs funcionales del proyecto Zoho.
+ZOHO_SPRINTS_ITEM_TYPE_ID=
+ZOHO_SPRINTS_PRIORITY_ID=
+
+# Tipos locales aceptados.
+# Ajustar esta lista si el proyecto usa otra taxonomia permitida por Zoho.
+ZOHO_SPRINTS_ALLOWED_TYPES_JSON=["bugfix", "feature", "improvement", "refactor", "tech-debt"]
+
+# Mapeo de estados locales del arnes a columnas/estados de Zoho Sprints.
+ZOHO_SPRINTS_STATUS_ID_PENDING=
+ZOHO_SPRINTS_STATUS_ID_IN_PROGRESS=
+ZOHO_SPRINTS_STATUS_ID_BLOCKED=
+ZOHO_SPRINTS_STATUS_ID_DONE=
+
+# Sincroniza estos estados locales. Separados por coma.
+ZOHO_SPRINTS_SYNC_STATUSES=pending,in_progress,blocked,done
+
+# Usuarios: claves locales -> userId de Zoho.
+# Las claves pueden coincidir con owner, implemented_by, reviewed_by, created_by o zoho.assignee_keys.
+ZOHO_SPRINTS_USER_MAP_JSON={}
+ZOHO_SPRINTS_DEFAULT_USER_IDS=[]
+
+# Campos extra del item Zoho. Los valores pueden usar placeholders:
+# {id}, {title}, {type}, {status}, {owner}, {implemented_by}, {reviewed_by}
+ZOHO_SPRINTS_EXTRA_ITEM_FIELDS_JSON={}
