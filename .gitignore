@@ -8,3 +8,10 @@ ai-harness-local/testing/.env
 ai-harness-local/testing/.auth/
 ai-harness-local/testing/runs/
 ai-harness-local/testing/sessions/
+
+# AI harness operational artifacts
+ai-harness-local/agents/handoffs/
+ai-harness-local/progress/session_*.md
+ai-harness-local/progress/impl_*.md
+ai-harness-local/progress/review_*.md
+ai-harness-local/progress/testplan_*.md
