@@ -1,0 +1,20 @@
+# THIS FILE IS MANAGED BY AI-HARNESS. CUSTOM ENVIRONMENTS ARE NEVER OVERWRITTEN.
+version = 1
+name = "ai-harness worktree"
+
+[setup]
+script = ""
+
+[setup.darwin]
+script = '''
+python3 "$CODEX_SOURCE_TREE_PATH/ai-harness/harness/framework/worktree.py" prepare \
+  --source-tree "$CODEX_SOURCE_TREE_PATH" \
+  --worktree "$CODEX_WORKTREE_PATH"
+'''
+
+[setup.linux]
+script = '''
+python3 "$CODEX_SOURCE_TREE_PATH/ai-harness/harness/framework/worktree.py" prepare \
+  --source-tree "$CODEX_SOURCE_TREE_PATH" \
+  --worktree "$CODEX_WORKTREE_PATH"
+'''
