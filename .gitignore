@@ -10,8 +10,33 @@ ai-harness-local/testing/runs/
 ai-harness-local/testing/sessions/
 
 # AI harness operational artifacts
+ai-harness-local/backlog/
 ai-harness-local/agents/handoffs/
 ai-harness-local/progress/session_*.md
 ai-harness-local/progress/impl_*.md
 ai-harness-local/progress/review_*.md
 ai-harness-local/progress/testplan_*.md
+# AI harness local and generated artifacts
+.env
+ai-harness/zoho/.zoho.env
+ai-harness/zoho/.zoho.client.env
+ai-harness/zoho/.zoho.config
+ai-harness-local/testing/*.local.env
+ai-harness-local/testing/playwright-report/
+ai-harness-local/testing/test-results/
+ai-harness-local/testing/traces/
+ai-harness-local/testing/task-plans/
+ai-harness-local/testing/reference-blueprints/
+ai-harness-local/testing/gi-drafts/*.receipt.json
+ai-harness-local/testing/gi-drafts/*.run.json
+ai-harness-local/testing/gi-drafts/*.promotion.json
+ai-harness-local/testing/gi-drafts/*.runs/
+ai-harness-local/progress/bugfix_*.md
+.playwright-cli/
+output/playwright/
+.DS_Store
+
+# AI Harness: only canonical progress ledgers are versionable
+ai-harness-local/progress/*
+!ai-harness-local/progress/current.md
+!ai-harness-local/progress/history.md
