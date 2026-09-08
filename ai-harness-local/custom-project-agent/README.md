@@ -19,5 +19,8 @@ Si un archivo no está listo para usar, nómbralo con `draft` en el nombre.
 Ese contenido se interpreta como ejemplo/placeholder y no se usa para decisiones
 operativas ni para el análisis automático.
 
-Para validacion UI local, completa `runtime-testing.md` y usa
-`ai-harness-local/testing/.env` para credenciales o valores sensibles.
+Para validacion local, completa `runtime-testing.md` solo con comandos, URLs,
+readiness y datos necesarios para probar. La topologia Docker no se duplica
+alli: vive en `dockers/local-runtime.json` y se consulta mediante la skill
+`local-runtime-maintenance`. Usa `ai-harness-local/testing/.env` para
+credenciales o valores sensibles.
