@@ -40,3 +40,6 @@ output/playwright/
 ai-harness-local/progress/*
 !ai-harness-local/progress/current.md
 !ai-harness-local/progress/history.md
+ai-harness-local/testing/runtime/
+ai-harness-local/testing/baseline/receipts/
+ai-harness-local/runtime/java.env
