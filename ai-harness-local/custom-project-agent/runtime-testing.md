@@ -1,42 +1,26 @@
 # Runtime y testing local
 
-Este archivo describe como validar el proyecto en local. Documenta una entrada
-canonica de arranque y evita duplicar comandos internos del wrapper elegido.
+Este proyecto es HTML estático para GitHub Pages. No usar Java, Maven, WildFly
+ni bases de datos; los scripts Python históricos son material archivado.
 
-## Stack
+## Entrada canónica
 
-- Java:
-- Maven:
-- Servidor de aplicaciones:
-- Base de datos:
+```bash
+./dockers/docker-local.sh validate
+./dockers/docker-local.sh up
+./dockers/docker-local.sh check
+./dockers/docker-local.sh logs
+./dockers/docker-local.sh down
+./dockers/docker-local.sh reset
+```
 
-## URLs
+URL http://127.0.0.1:8107/. Probar portada, idiomas 2026, ediciones anteriores,
+assets CSS/imágenes/PDF y rutas públicas con espacios. `check` verifica su
+contenido HTTP y rechaza exposición de archivos internos y directory listing.
 
-- Base URL:
-- Readiness:
-- Login:
+No hay login, credenciales ni seeds. Los servicios enlazados en las páginas
+siguen siendo externos; no simularlos ni ejecutar sus acciones para verificar
+este servidor estático. Preservar CNAME y el despliegue GitHub Pages.
 
-## Operacion
-
-- Arranque:
-- Parada:
-- Logs:
-
-## Datos de testing
-
-No guardar secretos en este archivo. Usar `ai-harness-local/testing/.env`.
-
-- Rol esperado:
-- Usuario/dataset recomendado:
-- Precondiciones de base:
-
-## Playwright
-
-- Comando:
-- Ruta de `storageState` si hay login:
-- Selectores estables de login:
-- Flujos UI prioritarios:
-
-## Limitaciones conocidas
-
--
+La topología y la provisión están en `dockers/local-runtime.json`; los detalles
+de aislamiento y de archivos públicos permitidos están en `dockers/DOCKER.md`.

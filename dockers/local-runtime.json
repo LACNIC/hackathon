@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "project": "hackathon",
+  "entrypoint": "dockers/docker-local.sh",
+  "compose": {
+    "files": [
+      "dockers/docker-compose.local.yml"
+    ],
+    "projectName": "hackathon-local"
+  },
+  "production": {
+    "protectedFiles": [
+      "CNAME",
+      "index.html"
+    ],
+    "defaultInvocationMustRemainCompatible": true,
+    "deployment": "static-site"
+  },
+  "ports": [
+    {
+      "name": "app",
+      "host": 8107,
+      "container": 8080,
+      "protocol": "tcp",
+      "bind": "loopback"
+    }
+  ],
+  "dependencies": [],
+  "defaultProfile": "static",
+  "profiles": {
+    "static": {
+      "dependencyModes": {}
+    }
+  },
+  "readiness": [
+    {
+      "type": "http",
+      "target": "http://127.0.0.1:8107/"
+    }
+  ],
+  "fingerprint": {
+    "paths": [
+      "dockers/runtime-local.py",
+      "dockers/Dockerfile.local",
+      "dockers/nginx.conf",
+      "index.html",
+      "2017",
+      "2019",
+      "2024",
+      "2025",
+      "2026",
+      "17 MVD"
+    ]
+  },
+  "provisioning": {
+    "repositories": [],
+    "images": [
+      {
+        "image": "nginx:1.28-alpine",
+        "source": "nginx:1.28-alpine"
+      }
+    ]
+  }
+}

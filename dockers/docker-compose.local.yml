@@ -1,0 +1,47 @@
+{
+  "name": "hackathon-local",
+  "services": {
+    "app": {
+      "image": "lacnic-local/hackathon:dev",
+      "container_name": "hackathon-local-app",
+      "labels": {
+        "ai.harness.project-root": "${HACKATHON_PROJECT_ROOT:-}"
+      },
+      "ports": [
+        "127.0.0.1:8107:8080"
+      ],
+      "mem_limit": "64m",
+      "read_only": true,
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=8m"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "wget",
+          "-q",
+          "-O",
+          "/dev/null",
+          "http://127.0.0.1:8080/"
+        ],
+        "interval": "3s",
+        "timeout": "3s",
+        "retries": 10
+      }
+    }
+  },
+  "networks": {
+    "default": {
+      "name": "hackathon-local-network",
+      "labels": {
+        "ai.harness.project-root": "${HACKATHON_PROJECT_ROOT:-}"
+      }
+    }
+  }
+}

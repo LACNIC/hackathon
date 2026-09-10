@@ -43,3 +43,6 @@ ai-harness-local/progress/*
 ai-harness-local/testing/runtime/
 ai-harness-local/testing/baseline/receipts/
 ai-harness-local/runtime/java.env
+
+# Local Python runtime helpers
+__pycache__/

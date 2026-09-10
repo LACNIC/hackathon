@@ -1,0 +1,7 @@
+FROM nginx:1.28-alpine
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx site/ /srv/site/
+USER nginx
+EXPOSE 8080
+ENTRYPOINT []
+CMD ["nginx", "-g", "daemon off;"]

@@ -17,3 +17,11 @@ Este archivo es append-only. Agrega una entrada al cerrar cada sesion de trabajo
 - Resultado: corregido el hallazgo P2; el README local se sustituyo por la plantilla vigente del harness y el registro anterior dejo de clasificarlo como resto canonico.
 - Evidencia: `cmp` aprobado, `git diff --check` aprobado, `check-review-rules.sh` aprobado y doctor parcial remoto `100%` con `0` hallazgos.
 - Estado: implementacion corregida y validada; queda pendiente una nueva revision independiente, sin commit ni push.
+
+<!-- ai-harness:history:doctor-hackathon-static:2026-09-10T15:36:12Z -->
+## 2026-09-10 - doctor-hackathon-static
+
+- Tarea: Aprovisionar Docker estático seguro para Hackathon
+- Modo: light
+- Estado: done
+- Rama: codex/doctor-hackathon-static

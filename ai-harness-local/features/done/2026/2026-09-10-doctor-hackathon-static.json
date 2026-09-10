@@ -1,0 +1,27 @@
+{
+  "schema": "ai-harness.feature-close-receipt/v1",
+  "id": "doctor-hackathon-static",
+  "title": "Aprovisionar Docker estático seguro para Hackathon",
+  "type": "improvement",
+  "implementation_mode": "light",
+  "status": "done",
+  "closed_at": "2026-09-10T15:36:12Z",
+  "archived_at": "2026-09-10T15:36:12Z",
+  "archive_reason": "close-task",
+  "git": {
+    "branch": "codex/doctor-hackathon-static",
+    "base_branch": "main",
+    "base_commit": "6f9f60846acb30d4dcbf3969908743671c4a2921"
+  },
+  "verification": {
+    "functional": {
+      "status": "done",
+      "notes": [
+        "15 rutas públicas HTTP byte-exactas y13 privadas/listing404; idiomas2026, CSS/SVG/PNG/PDF y espacios. Ciclo validate/up/reuse/down/logs/reset, puerto ocupado y aislamiento PASS; revisión independiente aprobada."
+      ],
+      "surface": "cli",
+      "visual_evidence_count": 0,
+      "visual_urls": []
+    }
+  }
+}
