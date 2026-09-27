@@ -8,6 +8,7 @@ ai-harness-local/testing/.env
 ai-harness-local/testing/.auth/
 ai-harness-local/testing/runs/
 ai-harness-local/testing/sessions/
+ai-harness-local/testing/stage-3-3/sessions/
 
 # AI harness operational artifacts
 ai-harness-local/backlog/
