@@ -35,7 +35,6 @@ READINESS_TIMEOUT_SECONDS = 180
 READINESS_INTERVAL_SECONDS = 5
 KUMA_DURATION_MINUTES = 30
 STANDARD_VERSION_FILE = "/opt/jboss/wildfly/standalone/configuration/deployed-version.txt"
-API_REGISTRO_VERSION_FILE = "/opt/api-registro-v4/deployed-version.txt"
 
 
 def required(value, name, pattern=None):
@@ -77,12 +76,8 @@ def remote(target: str, command: str, capture: bool = False,
     return run("ssh", target, command, capture=capture, timeout=timeout)
 
 
-def compose_command(directory: str, profile: str, registry: str, app: str, tag: str, action: str) -> str:
-    variables = ""
-    if profile == "api-registro":
-        variables = " ".join(f"{name}={shlex.quote(value)}" for name, value in
-                             (("REGISTRY", registry), ("APPNAME", app), ("VERSION", tag))) + " "
-    return f"cd {shlex.quote(directory)} && {variables}docker compose -f docker-compose.yml {action}"
+def compose_command(directory: str, action: str) -> str:
+    return f"cd {shlex.quote(directory)} && docker compose -f docker-compose.yml {action}"
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -90,11 +85,18 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def ready(url: str) -> bool:
-    request = Request(url)
+def ready(url: str, token: str, tag: str, timeout: float) -> bool:
+    request = Request(url, headers={"Authorization": f"Bearer {token}"})
     try:
-        with build_opener(NoRedirect()).open(request, timeout=8) as response:
-            return 200 <= response.status < 300
+        with build_opener(NoRedirect()).open(request, timeout=timeout) as response:
+            if response.status != 200:
+                return False
+            body = response.read(1024 * 1024 + 1)
+            if len(body) > 1024 * 1024:
+                return False
+            service = json.loads(body).get("service", {})
+            return (service.get("availability") == "UP"
+                    and service.get("deployedVersion") == tag)
     except HTTPError as error:
         error.close()
         return False
@@ -102,24 +104,24 @@ def ready(url: str) -> bool:
         return False
 
 
-def verify_release(target: str, directory: str, profile: str, registry: str, app: str,
-                   tag: str, health_url: str) -> None:
-    service = app if profile == "api-registro" else "app"
-    version_file = API_REGISTRO_VERSION_FILE if profile == "api-registro" else STANDARD_VERSION_FILE
+def verify_release(target: str, directory: str, tag: str,
+                   status_url: str | None, monitor_token: str | None) -> None:
     deadline = time.monotonic() + READINESS_TIMEOUT_SECONDS
     while True:
         try:
-            if ready(health_url):
-                command = compose_command(directory, profile, registry, app, tag,
-                                          f"exec -T {shlex.quote(service)} cat {shlex.quote(version_file)}")
+            command = compose_command(directory,
+                                      f"exec -T app cat {shlex.quote(STANDARD_VERSION_FILE)}")
+            remaining = deadline - time.monotonic()
+            if remaining > 0 and remote(target, command, capture=True,
+                                        timeout=min(10, remaining)).strip() == tag:
                 remaining = deadline - time.monotonic()
-                if remaining > 0 and remote(target, command, capture=True,
-                                            timeout=min(10, remaining)).strip() == tag:
+                if status_url is None or (remaining > 0 and ready(status_url, monitor_token, tag,
+                                                                   min(8, remaining))):
                     return
         except DeployError:
             pass  # Container may still be starting; retry within the bound.
         if time.monotonic() >= deadline:
-            raise DeployError("readiness and deployed version did not match before timeout")
+            raise DeployError("deployed version or monitored status did not match before timeout")
         time.sleep(min(READINESS_INTERVAL_SECONDS, max(0, deadline - time.monotonic())))
 
 
@@ -128,10 +130,24 @@ def deploy(registry: str, app: str, environment: str, target: str, workspace: Pa
     required(app, "appname", r"[A-Za-z0-9][A-Za-z0-9_.-]*")
     required(environment, "environment", r"[A-Za-z0-9][A-Za-z0-9_.-]*")
     required(target, "remote target", r"(?:[A-Za-z0-9_.-]+@)?[A-Za-z0-9.-]+")
+    if app == "api-registro-v4":
+        raise DeployError("API Registro uses dockers/docker-jenkins.sh; its new deploy is a separate task")
     config = config_file(workspace)
-    profile = "api-registro" if app == "api-registro-v4" else "standard"
-    health_url = endpoint(os.environ.get("DEPLOY_HEALTH_URL"), "DEPLOY_HEALTH_URL",
-                          https_only=environment == "prod")
+    if os.environ.get("DEPLOY_HEALTH_URL"):
+        raise DeployError("DEPLOY_HEALTH_URL is obsolete; use DEPLOY_STATUS_URL with /status/items")
+    status_url = os.environ.get("DEPLOY_STATUS_URL") or None
+    monitor_token = os.environ.get("DEPLOY_MONITOR_TOKEN") or None
+    if status_url:
+        endpoint(status_url, "DEPLOY_STATUS_URL", https_only=environment == "prod")
+        parsed_status = urlsplit(status_url)
+        if parsed_status.scheme == "http" and parsed_status.hostname not in {"localhost", "127.0.0.1", "::1"}:
+            raise DeployError("DEPLOY_STATUS_URL must use HTTPS outside loopback")
+        if not parsed_status.path.endswith("/status/items"):
+            raise DeployError("DEPLOY_STATUS_URL must end in /status/items")
+        if not monitor_token:
+            raise DeployError("DEPLOY_MONITOR_TOKEN is required with DEPLOY_STATUS_URL")
+    elif monitor_token:
+        raise DeployError("DEPLOY_STATUS_URL is required with DEPLOY_MONITOR_TOKEN")
     use_kuma = environment == "prod" and config is not None
     if use_kuma:
         kuma_url = endpoint(os.environ.get("KUMA_URL"), "KUMA_URL", https_only=True)
@@ -144,22 +160,14 @@ def deploy(registry: str, app: str, environment: str, target: str, workspace: Pa
             raise DeployError("Kuma duration must cover deployment and verification")
     if not (workspace / "dockers" / "Dockerfile").is_file() or not (workspace / "dockers" / "docker-compose.yml").is_file():
         raise DeployError("Dockerfile or Compose file is missing")
-    if profile == "api-registro" and not (workspace / "lib" / "xml-serializer-wildfly.jar").is_file():
-        raise DeployError("API Registro xml-serializer-wildfly.jar is missing")
     tag = f"{environment}-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
     directory = f"/usr/local/properties/{app}"
     print(f"Deploying {app} {tag} to {target}", flush=True)
     (workspace / "dockers" / "deployed-version.txt").write_text(tag + "\n", encoding="utf-8")
     run("docker", "volume", "create", "maven-repo")
     maven = ["docker", "run", "--rm", "--name", f"maven-{app}-{uuid.uuid4().hex[:8]}"]
-    if profile == "api-registro":
-        maven += ["--security-opt", "seccomp=unconfined"]
     maven += ["-v", "maven-repo:/root/.m2", "-v", f"{workspace}:/app", "-w", "/app"]
-    image = "maven:3.9.9-eclipse-temurin-21-jammy" if profile == "api-registro" else "maven:3.9.9-eclipse-temurin-17-focal"
-    if profile == "api-registro":
-        maven += [image, "sh", "-lc", "mvn install:install-file -Dfile=lib/xml-serializer-wildfly.jar -DgroupId=net.lacnic -DartifactId=xml-serializer-wildfly -Dversion=1.0.0 -Dpackaging=jar && mvn clean package -DskipTests"]
-    else:
-        maven += [image, "mvn", "clean", "package", "-DskipTests"]
+    maven += ["maven:3.9.9-eclipse-temurin-17-focal", "mvn", "clean", "package", "-DskipTests"]
     run(*maven)
     registry_host = registry.split("/", 1)[0]
     run("docker", "login", f"https://{registry_host}/")
@@ -170,17 +178,14 @@ def deploy(registry: str, app: str, environment: str, target: str, workspace: Pa
     run("docker", "push", precise)
     run("docker", "push", alias)
     remote(target, f"mkdir -p {shlex.quote(directory)}")
-    if profile == "api-registro":
-        remote(target, f"mkdir -p {shlex.quote(directory + '/logs')} {shlex.quote(directory + '/epp')} && (test -f {shlex.quote(directory + '/.env')} || touch {shlex.quote(directory + '/.env')})")
     run("scp", "dockers/docker-compose.yml", f"{target}:{directory}/docker-compose.yml")
-    expected = precise if profile == "api-registro" else alias
-    images = remote(target, compose_command(directory, profile, registry, app, tag, "config --images"), capture=True).splitlines()
-    if expected not in images:
+    images = remote(target, compose_command(directory, "config --images"), capture=True).splitlines()
+    if alias not in images:
         raise DeployError("remote Compose VERSION/image does not match the expected deployment alias")
     remote(target, f"docker pull {shlex.quote(precise)}")
-    remote(target, compose_command(directory, profile, registry, app, tag, "pull"))
+    remote(target, compose_command(directory, "pull"))
     precise_id = remote(target, f"docker image inspect {shlex.quote(precise)} --format '{{{{.Id}}}}'", capture=True)
-    expected_id = remote(target, f"docker image inspect {shlex.quote(expected)} --format '{{{{.Id}}}}'", capture=True)
+    expected_id = remote(target, f"docker image inspect {shlex.quote(alias)} --format '{{{{.Id}}}}'", capture=True)
     if not precise_id or precise_id != expected_id:
         raise DeployError("remote image digest differs from the precise tag")
     attempt = uuid.uuid4().hex
@@ -201,11 +206,11 @@ def deploy(registry: str, app: str, environment: str, target: str, workspace: Pa
                       + READINESS_TIMEOUT_SECONDS + WINDOW_MARGIN_SECONDS)
             if remaining < needed:
                 raise DeployError("Kuma activation took too long; refusing to interrupt services")
-        remote(target, compose_command(directory, profile, registry, app, tag, "down"),
+        remote(target, compose_command(directory, "down"),
                timeout=DOWN_TIMEOUT_SECONDS)
-        remote(target, compose_command(directory, profile, registry, app, tag, "up -d"),
+        remote(target, compose_command(directory, "up -d"),
                timeout=UP_TIMEOUT_SECONDS)
-        verify_release(target, directory, profile, registry, app, tag, health_url)
+        verify_release(target, directory, tag, status_url, monitor_token)
     except Exception:
         if maintenance_id is not None:
             print(f"Deployment failed; maintenance {maintenance_id} remains until its automatic expiry", file=sys.stderr)
