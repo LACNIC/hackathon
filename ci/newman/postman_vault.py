@@ -10,7 +10,6 @@ import copy
 import json
 import os
 import re
-import secrets
 import stat
 import subprocess
 import tempfile
@@ -132,23 +131,12 @@ def init(root: Path, vault_file: Path, env_file: Path, *, state_root: Path | Non
     root = root.resolve()
     vault_file = _cipher_path(root, vault_file)
     env_file = _private_path(root, env_file, state_root)
-    if vault_file.exists() or _env_key(env_file, allow_missing=True) is not None:
-        raise ValueError("Vault or local unlock key already exists; refusing to replace it")
-    key = secrets.token_urlsafe(48)
+    if vault_file.exists():
+        raise ValueError("Vault already exists; refusing to replace it")
+    key = _env_key(env_file)
     document = {"schemaVersion": SCHEMA_VERSION, "secrets": {}}
     ciphertext = _gpg("encrypt", key, json.dumps(document).encode("utf-8"))
-    prior = env_file.read_bytes() if env_file.exists() else b""
-    if prior and not prior.endswith(b"\n"):
-        prior += b"\n"
-    try:
-        _atomic_write(env_file, prior + ("POSTMAN_VAULT_KEY=" + key + "\n").encode("ascii"))
-        _atomic_write(vault_file, ciphertext)
-    except BaseException:
-        if prior:
-            _atomic_write(env_file, prior)
-        else:
-            env_file.unlink(missing_ok=True)
-        raise
+    _atomic_write(vault_file, ciphertext)
     return {"created": True, "secretNames": []}
 
 

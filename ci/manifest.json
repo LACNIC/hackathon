@@ -1,5 +1,5 @@
 {
-  "bundleVersion": "26590dc4a9a4ea0ff2e114fc93d6c0842b9b1361b830c331e636b0580edf0b99",
+  "bundleVersion": "60e825650bedcd4d8d9150e6a01e18fd3715105d93e62517465d40b8d5880c58",
   "collections": {},
   "files": {
     "README.md": "d1d0c576724cc0194597ccd7a96a1042b8a6510c0e7cbebae3e0982582dbee6e",
@@ -10,7 +10,7 @@
     "newman/http_evidence.py": "5ce9485a5e29f915e3c960ff0b28558bfbc1ba18611919391493169b2977ff27",
     "newman/postman_internal.py": "ad22bb02eb10f5c1222376b756052963accf13c1b27bddbac9c8c19c86cf000b",
     "newman/postman_remote.py": "48a9973ae7a181971dc9fe9203da8fa2e3103a85f181bd761c9579ea85c33b68",
-    "newman/postman_vault.py": "9174975663d18ec1802553170d9ce66e6f15557d4ef7ef5adea4be4445dadd56",
+    "newman/postman_vault.py": "68c44d3907f4eb12f9239faaef3dab79a64c441f57d5eb6e9dda9dd82600a8c5",
     "newman/publication_contract.py": "c06c33bb4040b91a2e68560a5c40c3348db610b75366ed4fb423a5227dc2f9e7",
     "newman/run-ci-tests.sh": "ad4eafe896c49f28fe070d147001c07e9bfccd833d01f6c25e75a3a3b0eedcc3",
     "newman/state_root.py": "4f81e5a8e598b0254a224f59b5d6605bd1cb720175729f80ef2e522e53cec9b6",
