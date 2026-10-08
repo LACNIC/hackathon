@@ -27,6 +27,8 @@ class DeployError(Exception):
 
 WINDOW_MARGIN_SECONDS = 120
 KUMA_ACTIVATION_BUDGET_SECONDS = 240
+DOWN_TIMEOUT_SECONDS = 120
+UP_TIMEOUT_SECONDS = 180
 
 
 def required(value, name, pattern=None):
@@ -38,28 +40,16 @@ def required(value, name, pattern=None):
 def config_file(workspace: Path) -> dict:
     path = workspace / "ci" / "deploy" / "config.json"
     config = json.loads(path.read_text(encoding="utf-8"))
-    allowed = {"schemaVersion", "profile", "remote", "health", "kuma"}
+    allowed = {"schemaVersion", "profile", "health", "kuma"}
     if not isinstance(config, dict) or set(config) != allowed:
-        raise DeployError("invalid deploy-harness.json fields")
+        raise DeployError("invalid ci/deploy/config.json fields")
     if config.get("schemaVersion") != 1 or config.get("profile") not in {"standard", "api-registro"}:
-        raise DeployError("invalid deploy-harness.json profile or schemaVersion")
-    remote = config.get("remote", {})
+        raise DeployError("invalid ci/deploy/config.json profile or schemaVersion")
     health = config.get("health", {})
     kuma = config.get("kuma", {})
-    if (not isinstance(remote, dict) or not set(remote) <= {"directory", "service", "logOwnerUid", "downTimeoutSeconds", "upTimeoutSeconds"}
-            or not isinstance(health, dict) or not set(health) <= {"url", "versionFile", "timeoutSeconds", "intervalSeconds", "headerName", "headerEnv"}
+    if (not isinstance(health, dict) or not set(health) <= {"url", "versionFile", "timeoutSeconds", "intervalSeconds", "headerName", "headerEnv"}
             or not isinstance(kuma, dict) or not set(kuma) <= {"url", "groupId", "groupPath", "durationMinutes"}):
         raise DeployError("unexpected deployment config field; never store credentials in this file")
-    required(remote.get("service"), "remote.service", r"[A-Za-z0-9][A-Za-z0-9_.-]*")
-    for name, default in (("downTimeoutSeconds", 120), ("upTimeoutSeconds", 180)):
-        value = remote.setdefault(name, default)
-        if type(value) is not int or not 30 <= value <= 900:
-            raise DeployError(f"invalid remote.{name}")
-    directory = remote.get("directory")
-    if directory is not None:
-        required(directory, "remote.directory", r"/[A-Za-z0-9_./-]+")
-        if ".." in Path(directory).parts or directory == "/":
-            raise DeployError("invalid remote.directory")
     required(health.get("versionFile"), "health.versionFile", r"/[A-Za-z0-9_./-]+")
     parsed = urlsplit(required(health.get("url"), "health.url"))
     if parsed.scheme not in {"http", "https"} or not parsed.hostname or parsed.username or parsed.password or parsed.query or parsed.fragment:
@@ -85,16 +75,11 @@ def config_file(workspace: Path) -> dict:
         raise DeployError("invalid kuma.groupPath")
     if type(kuma.get("durationMinutes")) is not int or not 5 <= kuma["durationMinutes"] <= 120:
         raise DeployError("invalid kuma.durationMinutes")
-    required_window_seconds = (remote["downTimeoutSeconds"] + remote["upTimeoutSeconds"]
+    required_window_seconds = (DOWN_TIMEOUT_SECONDS + UP_TIMEOUT_SECONDS
                                + health["timeoutSeconds"] + WINDOW_MARGIN_SECONDS
                                + KUMA_ACTIVATION_BUDGET_SECONDS)
     if kuma["durationMinutes"] * 60 < required_window_seconds:
         raise DeployError("Kuma duration must cover activation, down, up, readiness and closure margin")
-    owner = remote.get("logOwnerUid")
-    if owner is not None and owner != 10000:
-        raise DeployError("remote.logOwnerUid must be 10000 when enabled")
-    if config["profile"] == "api-registro" and owner is not None:
-        raise DeployError("API Registro prepares logs; do not configure logOwnerUid")
     return config
 
 
@@ -149,7 +134,7 @@ def ready(url: str, header_env: str | None, header_name: str | None) -> bool:
 def verify_release(target: str, directory: str, config: dict, registry: str, app: str, tag: str) -> None:
     health = config["health"]
     profile = config["profile"]
-    service = config["remote"]["service"]
+    service = app if profile == "api-registro" else "app"
     version_file = health["versionFile"]
     deadline = time.monotonic() + health["timeoutSeconds"]
     while True:
@@ -183,7 +168,7 @@ def deploy(registry: str, app: str, environment: str, target: str, workspace: Pa
     if config["profile"] == "api-registro" and not (workspace / "lib" / "xml-serializer-wildfly.jar").is_file():
         raise DeployError("API Registro xml-serializer-wildfly.jar is missing")
     tag = f"{environment}-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
-    directory = config["remote"].get("directory", f"/usr/local/properties/{app}")
+    directory = f"/usr/local/properties/{app}"
     print(f"Deploying {app} {tag} to {target}", flush=True)
     (workspace / "dockers" / "deployed-version.txt").write_text(tag + "\n", encoding="utf-8")
     run("docker", "volume", "create", "maven-repo")
@@ -208,10 +193,6 @@ def deploy(registry: str, app: str, environment: str, target: str, workspace: Pa
     remote(target, f"mkdir -p {shlex.quote(directory)}")
     if config["profile"] == "api-registro":
         remote(target, f"mkdir -p {shlex.quote(directory + '/logs')} {shlex.quote(directory + '/epp')} && (test -f {shlex.quote(directory + '/.env')} || touch {shlex.quote(directory + '/.env')})")
-    if config["remote"].get("logOwnerUid") == 10000:
-        owner = remote(target, f"stat -c %u {shlex.quote(directory + '/logs')}", capture=True)
-        if owner != "10000":
-            raise DeployError("remote logs directory must be owned by UID 10000")
     run("scp", "dockers/docker-compose.yml", f"{target}:{directory}/docker-compose.yml")
     profile = config["profile"]
     expected = precise if profile == "api-registro" else alias
@@ -234,14 +215,14 @@ def deploy(registry: str, app: str, environment: str, target: str, workspace: Pa
     print(f"Kuma maintenance {maintenance_id} active; stopping services", flush=True)
     try:
         remaining = kuma_cfg["durationMinutes"] * 60 - (time.monotonic() - window_requested_at)
-        needed = (config["remote"]["downTimeoutSeconds"] + config["remote"]["upTimeoutSeconds"]
+        needed = (DOWN_TIMEOUT_SECONDS + UP_TIMEOUT_SECONDS
                   + config["health"]["timeoutSeconds"] + WINDOW_MARGIN_SECONDS)
         if remaining < needed:
             raise DeployError("Kuma activation took too long; refusing to interrupt services")
         remote(target, compose_command(directory, profile, registry, app, tag, "down"),
-               timeout=config["remote"]["downTimeoutSeconds"])
+               timeout=DOWN_TIMEOUT_SECONDS)
         remote(target, compose_command(directory, profile, registry, app, tag, "up -d"),
-               timeout=config["remote"]["upTimeoutSeconds"])
+               timeout=UP_TIMEOUT_SECONDS)
         verify_release(target, directory, config, registry, app, tag)
     except Exception:
         print(f"Deployment failed; maintenance {maintenance_id} remains until its automatic expiry", file=sys.stderr)
