@@ -1,9 +1,9 @@
 {
-  "bundleVersion": "9934c8d275c60b95a64ad8ff99cb6ca35b3c3e1139b331fc075cbe3f1a514873",
+  "bundleVersion": "14510867c92aa617c6e710febec2a79d83394767ea4e9d7c8789aebf03a2be31",
   "collections": {},
   "files": {
-    "README.md": "39e924ffc0f53e9cfa8e43c8d15d2d7accbebe06d904ad764f5a365e1d2b0aa5",
-    "deploy/deploy.py": "4e26ddd4d3d83e387b3b026ca07c2dc24842ce832b54c962e0fcfb7f6e657d2c",
+    "README.md": "d1d0c576724cc0194597ccd7a96a1042b8a6510c0e7cbebae3e0982582dbee6e",
+    "deploy/deploy.py": "03d15bc5222bce79e5b53c4a27eb91b84e3e551e77a177ac85395633d4d0dbc1",
     "deploy/docker-jenkins-harness.sh": "333663e832a77a59d4da7634bce656a7b324994a14871b510c5dcb7223e8d3a8",
     "kuma/kuma_client.py": "b74cb56c082defbb4c9d4254015d7d971f649f7e072ba746ad4d8bd9d6e04e3b",
     "newman/ci_collection.py": "46f217d075b83c87c7cd2261e32d19ee371575c5b22a1ca0947e97ad8eb753da",
@@ -15,7 +15,7 @@
     "newman/run-ci-tests.sh": "ad4eafe896c49f28fe070d147001c07e9bfccd833d01f6c25e75a3a3b0eedcc3",
     "newman/state_root.py": "4f81e5a8e598b0254a224f59b5d6605bd1cb720175729f80ef2e522e53cec9b6",
     "newman/ws-ci": "d3199dd426a53f9a792d23f0649be5b7ee15f8ac666735473b3663e5829fffe5",
-    "verify.py": "99cdad34dd5d917cc8c0b65b8b964329538acd395894b9cdae622a6843445dc4"
+    "verify.py": "436996f8bb5e9a8c0bf45b98ff57d4676f5a865e340bba9547db279021dd6032"
   },
   "schemaVersion": 1
 }

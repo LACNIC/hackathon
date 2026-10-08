@@ -14,7 +14,7 @@ Deploy nuevo con Kuma: este checkout no tiene el job Docker legado y sus archivo
 
 Este proyecto no tiene pruebas Newman registradas. La carpeta `ci/newman/` está instalada pero inactiva.
 
-## Job de deploy con Kuma
+## Job de deploy (Kuma solo en producción cuando aplica)
 
 No hay una entrada de deploy Docker lista para migrar en este checkout. `ci/deploy/` y `ci/kuma/` quedan inactivos.
 

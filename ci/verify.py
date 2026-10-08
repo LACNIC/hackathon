@@ -19,6 +19,33 @@ FILES = {
 EXCLUDED = {".git", "ai-harness", "ai-harness-local", "target", "node_modules", "ci"}
 
 
+def deployment_config(root: Path) -> dict | None:
+    path = root / "deploy/config.json"
+    if path.is_symlink() or (path.exists() and not path.is_file()):
+        raise ValueError("linked or invalid deployment configuration")
+    if not path.exists():
+        return None
+    try:
+        config = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise ValueError(f"invalid ci/deploy/config.json JSON: {error.msg}") from None
+    if not isinstance(config, dict) or set(config) != {"schemaVersion", "kuma"}:
+        raise ValueError("invalid ci/deploy/config.json fields")
+    if type(config["schemaVersion"]) is not int or config["schemaVersion"] != 1:
+        raise ValueError("invalid ci/deploy/config.json schemaVersion")
+    kuma = config["kuma"]
+    if not isinstance(kuma, dict) or set(kuma) != {"groupId", "groupPath"}:
+        raise ValueError("invalid Kuma group config; never store credentials in this file")
+    if type(kuma["groupId"]) is not int or kuma["groupId"] <= 0:
+        raise ValueError("invalid kuma.groupId")
+    group_path = kuma["groupPath"]
+    if (not isinstance(group_path, list) or len(group_path) < 2
+            or group_path[0] != "Dev-Gamma"
+            or not all(isinstance(part, str) and part for part in group_path)):
+        raise ValueError("invalid kuma.groupPath")
+    return config
+
+
 def collections_for(project: Path) -> dict[str, str]:
     collections = {}
     for path in project.rglob("postman/collection.json"):
@@ -56,9 +83,8 @@ def verify(root: Path) -> dict:
         directory = root / name
         if directory.is_symlink() or not directory.is_dir():
             raise ValueError(f"missing or linked CI directory: {name}")
+    deployment_config(root)
     config = root / "deploy/config.json"
-    if config.is_symlink() or (config.exists() and not config.is_file()):
-        raise ValueError("linked or invalid deployment configuration")
     actual = {str(path.relative_to(root)) for path in root.rglob("*")
               if path.is_file() or path.is_symlink()}
     directories = {str(path.relative_to(root)) for path in root.rglob("*") if path.is_dir()}
