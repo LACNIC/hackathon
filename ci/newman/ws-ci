@@ -1,0 +1,225 @@
+#!/usr/bin/env python3
+"""Run canonical read-only WS suites from a project checkout for CI."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+import time
+import xml.etree.ElementTree as ET
+from pathlib import Path
+from urllib.parse import urlsplit
+
+from postman_internal import load_profiles
+from postman_vault import materialize
+from publication_contract import default_tests_enabled
+from state_root import resolve_state_root
+from ci_collection import _same_http_endpoint, junit_counts, suite_collection
+
+
+SUITES = ("smoke", "contract", "access")
+VARIABLE = re.compile(r"\{\{([A-Za-z_][A-Za-z0-9_]*)\}\}")
+
+
+def private_key_file(directory: Path) -> Path | None:
+    key = os.environ.get("POSTMAN_VAULT_KEY")
+    if not key:
+        return None
+    path = directory / "vault-key.env"
+    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(descriptor, "w", encoding="utf-8") as output:
+        output.write("POSTMAN_VAULT_KEY=" + key + "\n")
+    return path
+
+
+def environment_values(payload: dict) -> dict[str, str]:
+    values = {}
+    for entry in payload.get("values", []):
+        key = entry.get("key")
+        if entry.get("enabled", True):
+            if not isinstance(key, str) or key in values:
+                raise ValueError("materialized Newman environment repeats or omits a variable name")
+            values[key] = str(entry.get("value") or "")
+    return values
+
+
+def selected_collection(collection: dict, suite: str, role: str) -> tuple[dict, list[dict], int]:
+    folder = suite.capitalize()
+    _, all_items, scenario_mode = suite_collection(collection, folder)
+    if not scenario_mode:
+        raise ValueError("the collection has no registered WS test scenarios")
+    selected, items, _ = suite_collection(collection, folder, environment_role=role)
+    if not items:
+        raise ValueError(f"no {folder} requests eligible for {role}")
+    for item in items:
+        if item.get("request", {}).get("method") not in {"GET", "HEAD"} or not item.get("event"):
+            raise ValueError(f"unsafe or untested {folder} request: {item.get('name', '<unnamed>')}")
+        url = item["request"].get("url", {})
+        if (not isinstance(url, dict) or not isinstance(url.get("raw"), str)
+                or not url["raw"].startswith("{{base_url}}/")
+                or url.get("host") != ["{{base_url}}"]
+                or url.get("protocol") or url.get("port")):
+            raise ValueError(f"{folder} request does not target the supplied base URL: "
+                             f"{item.get('name', '<unnamed>')}")
+    selected = {"info": selected.get("info", {}),
+                "variable": selected.get("variable", []), "item": selected["item"]}
+    return selected, items, len(all_items) - len(items)
+
+
+def check_target(project: Path, target_url: str, role: str, payload: dict,
+                 selected: list[dict]) -> None:
+    values = environment_values(payload)
+    if values.get("ws_tests_enabled") != "true":
+        raise ValueError("the selected profile has Newman tests disabled")
+    if values.get("base_url") != target_url:
+        raise ValueError("Newman environment base_url differs from the requested URL")
+    publication = json.loads((project / "postman/publication.json").read_text(encoding="utf-8"))
+    if _same_http_endpoint(target_url, publication.get("productionUrl", "")):
+        raise ValueError("Newman read suites cannot target the published production URL")
+    if role == "local" and any(item.get("x-ai-harness-ws-test-environments") == ["local"]
+                               for item in selected):
+        if urlsplit(target_url).hostname not in {"localhost", "127.0.0.1", "::1"}:
+            raise ValueError("local-only WS tests require a loopback URL")
+    try:
+        if float(values.get("max_response_ms", "")) <= 0:
+            raise ValueError
+    except (TypeError, ValueError):
+        raise ValueError("environment max_response_ms must be positive") from None
+    required = {name for item in selected
+                for name in VARIABLE.findall(json.dumps(item.get("request", {})))}
+    for name in sorted(required - {"base_url"}):
+        if not values.get(name, "").strip() or values[name].strip().startswith("{{"):
+            raise ValueError(f"environment variable {name} is missing or empty")
+
+
+def request_counts(report_path: Path) -> tuple[int, int, int]:
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    run = report["run"]
+    requests = run["stats"]["requests"]
+    counts = (requests["total"], requests["failed"], requests["pending"])
+    if any(not isinstance(value, int) or value < 0 for value in counts):
+        raise ValueError("Newman JSON report has invalid request counts")
+    if run.get("failures"):
+        raise ValueError("Newman JSON report contains failures")
+    return counts
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--project-root", type=Path, default=Path.cwd())
+    parser.add_argument("--state-root", type=Path,
+                        help="trusted Git root for ignored ai-harness-local state")
+    parser.add_argument("--role", default="testing", help="versioned non-production profile")
+    parser.add_argument("--url", required=True, help="base URL targeted by the selected Newman suites")
+    parser.add_argument("--suite", action="append", choices=SUITES,
+                        help="repeat to select suites; default: smoke, contract, access")
+    parser.add_argument("--newman-bin", default=os.environ.get("NEWMAN_BIN", "newman"))
+    parser.add_argument("--output-dir", type=Path,
+                        help="JUnit and summary directory; default: target/ws-tests")
+    args = parser.parse_args()
+    target = urlsplit(args.url)
+    if (target.scheme not in {"http", "https"} or not target.hostname
+            or target.username or target.password or target.query or target.fragment):
+        parser.error("--url must be an HTTP(S) base URL without credentials, query or fragment")
+    target_url = args.url.rstrip("/")
+    project = args.project_root.resolve()
+    try:
+        state = resolve_state_root(project, args.state_root)
+    except ValueError as error:
+        parser.error(str(error))
+    if not (project / "postman/collection.json").is_file():
+        parser.error("the project has no canonical postman/collection.json")
+    collection = json.loads((project / "postman/collection.json").read_text(encoding="utf-8"))
+    profiles = {profile.id: profile for profile in load_profiles(project)}
+    if args.role not in profiles or not default_tests_enabled(args.role):
+        parser.error("--role must select a versioned non-production profile")
+    if shutil.which(args.newman_bin) is None:
+        parser.error("Newman executable is unavailable; install it on the Jenkins agent")
+
+    output_path = args.output_dir or project / "target/ws-tests"
+    if output_path.is_symlink():
+        parser.error("output directory cannot be a symlink")
+    output_dir = output_path.resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    suites = list(dict.fromkeys(args.suite or SUITES))
+    for suite in SUITES:
+        (output_dir / f"{suite}.xml").unlink(missing_ok=True)
+    (output_dir / "summary.json").unlink(missing_ok=True)
+
+    private_parent = state / "ai-harness-local/testing/runs"
+    if private_parent.resolve() != private_parent:
+        parser.error("private run directory cannot escape through a symlink")
+    private_parent.mkdir(parents=True, exist_ok=True)
+    private_dir = Path(tempfile.mkdtemp(prefix="ws-ci-", dir=private_parent))
+    os.chmod(private_dir, stat.S_IRWXU)
+    run_dir = Path(tempfile.mkdtemp(prefix="ws-ci-run-"))
+    key_file = None
+    summary = {"role": args.role, "status": "FAILED", "suites": []}
+    try:
+        key_file = private_key_file(private_dir)
+        env_file = key_file or state / "ai-harness-local/runtime/.env"
+        environment = private_dir / "environment.json"
+        materialize(project, Path("postman/environments.vault.gpg"), env_file,
+                    args.role, environment,
+                    state_root=state if args.state_root is not None else None)
+        payload = json.loads(environment.read_text(encoding="utf-8"))
+        base_urls = [entry for entry in payload.get("values", []) if entry.get("key") == "base_url"]
+        if len(base_urls) != 1:
+            raise ValueError("materialized Newman environment must contain one base_url")
+        base_urls[0]["value"] = target_url
+        environment.write_text(json.dumps(payload, ensure_ascii=False) + "\n", encoding="utf-8")
+        child_env = os.environ.copy()
+        child_env.pop("POSTMAN_VAULT_KEY", None)
+        for suite in suites:
+            selected, items, excluded = selected_collection(collection, suite, args.role)
+            check_target(project, target_url, args.role, payload, items)
+            selected_path = run_dir / f"{suite}.collection.json"
+            selected_path.write_text(json.dumps(selected, ensure_ascii=False) + "\n", encoding="utf-8")
+            junit_path = run_dir / f"{suite}.xml"
+            report_path = run_dir / f"{suite}.json"
+            command = [args.newman_bin, "run", str(selected_path),
+                       "--folder", suite.capitalize(), "--environment", str(environment),
+                       "--reporters", "json,junit", "--reporter-json-export", str(report_path),
+                       "--reporter-junit-export", str(junit_path),
+                       "--timeout", "120000", "--timeout-request", "10000"]
+            started = time.perf_counter_ns()
+            result = subprocess.run(command, capture_output=True, text=True,
+                                    check=False, env=child_env)
+            duration_ms = round((time.perf_counter_ns() - started) / 1_000_000, 3)
+            if junit_path.is_file():
+                shutil.copyfile(junit_path, output_dir / f"{suite}.xml")
+            counts = junit_counts(junit_path)
+            actual, failed_requests, pending_requests = request_counts(report_path)
+            passed = (result.returncode == 0 and actual == len(items)
+                      and failed_requests == 0 and pending_requests == 0 and counts["tests"] > 0
+                      and not any(counts[name] for name in ("failures", "errors", "skipped")))
+            summary["suites"].append({
+                "name": suite, "status": "PASSED" if passed else "FAILED",
+                "requests": actual, "assertions": counts["tests"],
+                "failures": counts["failures"], "errors": counts["errors"],
+                "excludedLocalOnly": excluded, "durationMs": duration_ms,
+            })
+        summary["status"] = ("PASSED" if len(summary["suites"]) == len(suites)
+                             and all(item["status"] == "PASSED" for item in summary["suites"])
+                             else "FAILED")
+        return 0 if summary["status"] == "PASSED" else 1
+    except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError, ET.ParseError) as error:
+        summary["error"] = str(error)
+        return 2
+    finally:
+        (output_dir / "summary.json").write_text(
+            json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps(summary, ensure_ascii=False))
+        shutil.rmtree(private_dir)
+        shutil.rmtree(run_dir)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

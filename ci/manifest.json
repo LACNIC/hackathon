@@ -1,0 +1,21 @@
+{
+  "bundleVersion": "6fd99496ec2ec4cf5213dfee399c965411783581194a698cedfadb095c8accde",
+  "collections": {},
+  "files": {
+    "README.md": "39e924ffc0f53e9cfa8e43c8d15d2d7accbebe06d904ad764f5a365e1d2b0aa5",
+    "deploy/deploy.py": "35e9209c77ceedc536886841738e7f93d349556aa5627fc367f4fe38956d5197",
+    "deploy/docker-jenkins-harness.sh": "333663e832a77a59d4da7634bce656a7b324994a14871b510c5dcb7223e8d3a8",
+    "kuma/kuma_client.py": "b74cb56c082defbb4c9d4254015d7d971f649f7e072ba746ad4d8bd9d6e04e3b",
+    "newman/ci_collection.py": "46f217d075b83c87c7cd2261e32d19ee371575c5b22a1ca0947e97ad8eb753da",
+    "newman/http_evidence.py": "5ce9485a5e29f915e3c960ff0b28558bfbc1ba18611919391493169b2977ff27",
+    "newman/postman_internal.py": "ad22bb02eb10f5c1222376b756052963accf13c1b27bddbac9c8c19c86cf000b",
+    "newman/postman_remote.py": "48a9973ae7a181971dc9fe9203da8fa2e3103a85f181bd761c9579ea85c33b68",
+    "newman/postman_vault.py": "9174975663d18ec1802553170d9ce66e6f15557d4ef7ef5adea4be4445dadd56",
+    "newman/publication_contract.py": "c06c33bb4040b91a2e68560a5c40c3348db610b75366ed4fb423a5227dc2f9e7",
+    "newman/run-ci-tests.sh": "ad4eafe896c49f28fe070d147001c07e9bfccd833d01f6c25e75a3a3b0eedcc3",
+    "newman/state_root.py": "4f81e5a8e598b0254a224f59b5d6605bd1cb720175729f80ef2e522e53cec9b6",
+    "newman/ws-ci": "d3199dd426a53f9a792d23f0649be5b7ee15f8ac666735473b3663e5829fffe5",
+    "verify.py": "99cdad34dd5d917cc8c0b65b8b964329538acd395894b9cdae622a6843445dc4"
+  },
+  "schemaVersion": 1
+}
