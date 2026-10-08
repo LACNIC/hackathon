@@ -1,5 +1,5 @@
 {
-  "bundleVersion": "51855a67003197c92f8a1eba4c30bb6e997f25d909914c58493db324ad3d96c3",
+  "bundleVersion": "26590dc4a9a4ea0ff2e114fc93d6c0842b9b1361b830c331e636b0580edf0b99",
   "collections": {},
   "files": {
     "README.md": "d1d0c576724cc0194597ccd7a96a1042b8a6510c0e7cbebae3e0982582dbee6e",
@@ -15,7 +15,7 @@
     "newman/run-ci-tests.sh": "ad4eafe896c49f28fe070d147001c07e9bfccd833d01f6c25e75a3a3b0eedcc3",
     "newman/state_root.py": "4f81e5a8e598b0254a224f59b5d6605bd1cb720175729f80ef2e522e53cec9b6",
     "newman/ws-ci": "d3199dd426a53f9a792d23f0649be5b7ee15f8ac666735473b3663e5829fffe5",
-    "verify.py": "436996f8bb5e9a8c0bf45b98ff57d4676f5a865e340bba9547db279021dd6032"
+    "verify.py": "fc7a1b0d678d551203ea2ba5c48d291e84e97d9c0b014d2cda345292402d9591"
   },
   "schemaVersion": 1
 }

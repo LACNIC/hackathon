@@ -20,7 +20,7 @@ EXCLUDED = {".git", "ai-harness", "ai-harness-local", "target", "node_modules", 
 
 
 def deployment_config(root: Path) -> dict | None:
-    path = root / "deploy/config.json"
+    path = root / "kuma/config.json"
     if path.is_symlink() or (path.exists() and not path.is_file()):
         raise ValueError("linked or invalid deployment configuration")
     if not path.exists():
@@ -28,11 +28,11 @@ def deployment_config(root: Path) -> dict | None:
     try:
         config = json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as error:
-        raise ValueError(f"invalid ci/deploy/config.json JSON: {error.msg}") from None
+        raise ValueError(f"invalid ci/kuma/config.json JSON: {error.msg}") from None
     if not isinstance(config, dict) or set(config) != {"schemaVersion", "kuma"}:
-        raise ValueError("invalid ci/deploy/config.json fields")
+        raise ValueError("invalid ci/kuma/config.json fields")
     if type(config["schemaVersion"]) is not int or config["schemaVersion"] != 1:
-        raise ValueError("invalid ci/deploy/config.json schemaVersion")
+        raise ValueError("invalid ci/kuma/config.json schemaVersion")
     kuma = config["kuma"]
     if not isinstance(kuma, dict) or set(kuma) != {"groupId", "groupPath"}:
         raise ValueError("invalid Kuma group config; never store credentials in this file")
@@ -84,11 +84,11 @@ def verify(root: Path) -> dict:
         if directory.is_symlink() or not directory.is_dir():
             raise ValueError(f"missing or linked CI directory: {name}")
     deployment_config(root)
-    config = root / "deploy/config.json"
+    config = root / "kuma/config.json"
     actual = {str(path.relative_to(root)) for path in root.rglob("*")
               if path.is_file() or path.is_symlink()}
     directories = {str(path.relative_to(root)) for path in root.rglob("*") if path.is_dir()}
-    allowed = FILES | {"manifest.json"} | ({"deploy/config.json"} if config.exists() else set())
+    allowed = FILES | {"manifest.json"} | ({"kuma/config.json"} if config.exists() else set())
     if actual != allowed or directories != {"deploy", "kuma", "newman"}:
         raise ValueError("unexpected or missing CI files")
     for name in ("deploy/docker-jenkins-harness.sh", "newman/run-ci-tests.sh", "newman/ws-ci"):
